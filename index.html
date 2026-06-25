@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المحاضرة الخامسة — دمج Claude مع Power Automate | Sunshine T Academy</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--cream:#fdfaf3;--dark:#1a2847;--blue:#2c3e50;--gold:#c9a961;--gold-light:#f5e6c4;
+--bg:#f8f9fa;--text:#1a1a1a;--muted:#6c757d;--success:#27ae60;--danger:#c0392b;
+--warning:#e67e22;--info:#3498db;--border:#e8e3d3;--code-bg:#1a2847;--code-text:#e6c887;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Cairo',sans-serif;background:var(--cream);color:var(--text);line-height:1.85;font-size:17px}
+
+.cover{background:linear-gradient(160deg,#0f1b30 0%,#1a2847 40%,#2c3e50 100%);color:#fff;padding:70px 40px 55px;position:relative;overflow:hidden}
+.cover::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 75% 15%,rgba(201,169,97,.12),transparent 55%),radial-gradient(ellipse at 25% 85%,rgba(201,169,97,.08),transparent 55%)}
+.cover-inner{max-width:1100px;margin:0 auto;position:relative;z-index:2}
+.cover-badge{display:inline-block;background:rgba(201,169,97,.15);color:var(--gold-light);padding:6px 18px;border-radius:24px;font-size:13px;font-weight:700;border:1px solid rgba(201,169,97,.3);margin-bottom:18px;letter-spacing:.5px}
+.cover h1{font-size:52px;font-weight:900;line-height:1.25;margin-bottom:16px;max-width:850px}
+.cover h1 .hl{color:var(--gold)}
+.cover-sub{font-size:21px;color:rgba(255,255,255,.82);max-width:780px;line-height:1.65;margin-bottom:36px}
+.cover-meta{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--gold-light);margin-bottom:32px;flex-wrap:wrap}
+.cover-meta .dot{width:4px;height:4px;background:var(--gold);border-radius:50%}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:36px;max-width:850px}
+.mini-card{background:rgba(255,255,255,.07);backdrop-filter:blur(8px);padding:14px 18px;border-radius:10px;border:1px solid rgba(255,255,255,.1)}
+.mini-card .lbl{font-size:11px;color:var(--gold-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.mini-card .val{font-size:15px;font-weight:700}
+.toc-box{background:rgba(255,255,255,.04);border:1px solid rgba(201,169,97,.2);border-radius:14px;padding:22px 26px;max-width:850px}
+.toc-title{font-size:13px;color:var(--gold);font-weight:700;margin-bottom:14px;letter-spacing:1px;text-transform:uppercase}
+.toc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 22px;list-style:none}
+.toc-grid li{font-size:14px;padding:7px 0;display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.82);cursor:pointer;transition:.3s}
+.toc-grid li:hover{color:var(--gold);transform:translateX(-4px)}
+.toc-n{color:var(--gold);font-weight:900;font-size:16px;min-width:24px}
+
+.main{max-width:960px;margin:0 auto;padding:55px 28px 20px}
+.sec{margin-bottom:72px;scroll-margin-top:24px}
+.sec-head{display:flex;align-items:center;gap:18px;margin-bottom:26px;padding-bottom:18px;border-bottom:2px solid var(--border);position:relative}
+.sec-head::after{content:'';position:absolute;bottom:-2px;right:0;width:72px;height:2px;background:var(--gold)}
+.sec-num{font-size:44px;font-weight:900;color:var(--gold);line-height:1;min-width:72px}
+.sec-head h2{font-size:30px;font-weight:900;color:var(--dark);margin-bottom:4px;line-height:1.3}
+.sec-sub{font-size:15px;color:var(--muted);font-weight:600}
+.intro{font-size:17px;line-height:2;margin-bottom:22px;color:var(--text)}
+.intro strong{color:var(--dark)}
+
+.golden{background:linear-gradient(135deg,#fdf8ec,#f8edce);border-right:5px solid var(--gold);border-radius:12px;padding:26px 30px;margin:28px 0;position:relative;box-shadow:0 4px 18px rgba(201,169,97,.13)}
+.golden::before{content:'💡 القاعدة الذهبية';position:absolute;top:-13px;right:22px;background:var(--gold);color:#fff;padding:5px 16px;border-radius:20px;font-size:12px;font-weight:900;box-shadow:0 2px 8px rgba(201,169,97,.3)}
+.golden p{font-size:18px;line-height:1.9;color:var(--dark);font-weight:600;margin-top:8px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;margin:26px 0}
+.card{background:#fff;border:1px solid var(--border);border-radius:13px;padding:24px;transition:.3s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:var(--gold);transform:scaleY(0);transition:.3s;transform-origin:bottom}
+.card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(26,40,71,.08);border-color:var(--gold)}
+.card:hover::before{transform:scaleY(1)}
+.card-icon{width:48px;height:48px;background:var(--gold-light);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--gold);margin-bottom:14px}
+.card h4{font-size:17px;color:var(--dark);margin-bottom:8px;font-weight:900}
+.card p{font-size:14px;color:var(--muted);line-height:1.7}
+
+.box{padding:18px 22px;border-radius:10px;margin:22px 0;border-right:4px solid}
+.box h5{font-size:14px;margin-bottom:7px;display:flex;align-items:center;gap:8px;font-weight:900}
+.box p{font-size:15px;line-height:1.8;color:var(--dark)}
+.box-tip{background:#e8f5e9;border-color:var(--success)}.box-tip h5{color:var(--success)}
+.box-warn{background:#fef3e7;border-color:var(--warning)}.box-warn h5{color:var(--warning)}
+.box-danger{background:#fdecea;border-color:var(--danger)}.box-danger h5{color:var(--danger)}
+.box-info{background:#e3f2fd;border-color:var(--info)}.box-info h5{color:var(--info)}
+.box-cost{background:#fff3cd;border-color:var(--warning)}.box-cost h5{color:var(--warning)}
+
+.term{background:#fff;border:1px solid var(--border);border-radius:11px;padding:20px 24px;margin:14px 0;display:flex;gap:18px;align-items:flex-start;transition:.3s}
+.term:hover{border-color:var(--gold);box-shadow:0 5px 16px rgba(201,169,97,.1)}
+.term-n{min-width:150px;font-weight:900;font-size:16px;color:var(--gold)}
+.term-d{flex:1;font-size:15px;line-height:1.8;color:var(--text)}
+.term-d code{background:var(--gold-light);padding:1px 7px;border-radius:4px;color:var(--dark);font-family:'JetBrains Mono',monospace;font-size:13px}
+
+.tbl{width:100%;border-collapse:collapse;margin:22px 0;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.04)}
+.tbl thead{background:linear-gradient(135deg,var(--dark),var(--blue));color:#fff}
+.tbl th{padding:14px 18px;text-align:right;font-weight:900;font-size:14px;letter-spacing:.4px}
+.tbl td{padding:13px 18px;border-bottom:1px solid var(--border);font-size:14px;line-height:1.6}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover{background:var(--gold-light)}
+
+.steps{counter-reset:st;list-style:none;margin:22px 0}
+.steps li{counter-increment:st;padding:16px 18px 16px 0;padding-right:66px;position:relative;background:#fff;margin-bottom:10px;border-radius:10px;border:1px solid var(--border);font-size:15px;line-height:1.8;transition:.3s}
+.steps li:hover{border-color:var(--gold);box-shadow:0 4px 12px rgba(201,169,97,.12)}
+.steps li::before{content:counter(st);position:absolute;right:16px;top:50%;transform:translateY(-50%);width:36px;height:36px;background:var(--gold);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px}
+
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:22px 0}
+.cmp-side{padding:24px;border-radius:12px;border:2px solid;position:relative}
+.cmp-side.ok{background:#f0f9f4;border-color:var(--success)}
+.cmp-side.no{background:#fdf2f2;border-color:var(--danger)}
+.cmp-badge{position:absolute;top:-13px;right:18px;padding:5px 14px;border-radius:20px;font-size:12px;font-weight:900;color:#fff}
+.cmp-side.ok .cmp-badge{background:var(--success)}
+.cmp-side.no .cmp-badge{background:var(--danger)}
+.cmp-side h4{font-size:17px;margin-bottom:14px;margin-top:6px;color:var(--dark);font-weight:900}
+.cmp-side ul{list-style:none}
+.cmp-side li{padding:6px 0 6px 0;padding-right:26px;position:relative;font-size:14px;line-height:1.7}
+.cmp-side.ok li::before{content:'✅';position:absolute;right:0;top:6px}
+.cmp-side.no li::before{content:'❌';position:absolute;right:0;top:6px}
+
+.ex{background:#fff;border:1px solid var(--border);border-radius:13px;padding:24px;margin:22px 0;box-shadow:0 3px 14px rgba(0,0,0,.03)}
+.ex-head{display:flex;align-items:center;gap:10px;padding-bottom:14px;margin-bottom:18px;border-bottom:2px dashed var(--border)}
+.ex-tag{background:var(--gold);color:#fff;padding:5px 12px;border-radius:7px;font-weight:900;font-size:13px}
+.ex-head h4{font-size:17px;color:var(--dark);font-weight:900}
+.ex-scene{background:var(--cream);padding:12px 16px;border-radius:8px;margin-bottom:14px;font-size:14px;line-height:1.7}
+.ex-scene strong{color:var(--gold)}
+.ex-result{background:#f0f9f4;border-right:3px solid var(--success);padding:12px 16px;border-radius:8px;margin-top:14px;font-size:14px;line-height:1.7;color:var(--dark)}
+
+.sandbox{background:var(--code-bg);color:var(--code-text);padding:20px 22px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:14px;line-height:1.9;margin:14px 0;direction:ltr;text-align:left;border-right:4px solid var(--gold);white-space:pre-wrap;position:relative;overflow-x:auto}
+.sandbox .tag{color:#f59e0b;font-weight:700}
+.sandbox .c{color:#ecf0f1}
+.sandbox .kw{color:#38bdf8}
+.sandbox .str{color:#86efac}
+.sandbox-copy{position:absolute;top:8px;left:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;padding:5px 12px;border-radius:6px;font-size:11px;cursor:pointer;font-family:'Cairo',sans-serif;transition:.3s}
+.sandbox-copy:hover{background:var(--gold);border-color:var(--gold)}
+
+.drill{background:linear-gradient(135deg,var(--dark),var(--blue));color:#fff;padding:26px 30px;border-radius:13px;margin:28px 0;position:relative;overflow:hidden}
+.drill::before{content:'';position:absolute;top:-40px;left:-40px;width:130px;height:130px;background:radial-gradient(circle,rgba(201,169,97,.2),transparent)}
+.drill-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;position:relative;z-index:2;flex-wrap:wrap;gap:10px}
+.drill-head h4{font-size:20px;font-weight:900;display:flex;align-items:center;gap:8px}
+.time-badge{background:var(--gold);color:#fff;padding:5px 14px;border-radius:20px;font-weight:700;font-size:13px;display:inline-flex;align-items:center;gap:5px}
+.drill ol{list-style:decimal;padding-right:22px;position:relative;z-index:2}
+.drill li{padding:5px 0;font-size:15px;line-height:1.8}
+
+.checkpoint{background:linear-gradient(135deg,#e8f5e9,#c8e6c9);border:3px solid var(--success);border-radius:14px;padding:24px;margin:24px 0;position:relative}
+.checkpoint::before{content:'✅ Checkpoint';position:absolute;top:-14px;right:20px;background:var(--success);color:#fff;padding:6px 16px;border-radius:20px;font-weight:900;font-size:13px}
+.checkpoint h5{font-size:16px;color:var(--success);margin-bottom:10px;font-weight:900}
+.checkpoint ul{list-style:none;padding-right:20px}
+.checkpoint li{padding:6px 0;font-size:14px;line-height:1.7}
+.checkpoint li::before{content:'✓ ';color:var(--success);font-weight:900}
+
+.glossary{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px;margin:22px 0}
+.g-item{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 18px;transition:.3s}
+.g-item:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:0 5px 14px rgba(201,169,97,.08)}
+.g-term{color:var(--gold);font-weight:900;font-size:15px;margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.g-ar{font-size:13px;color:var(--muted);margin-bottom:5px;font-style:italic}
+.g-def{font-size:13px;line-height:1.7;color:var(--text)}
+
+.quiz{background:#fff;border-radius:13px;padding:26px;margin:26px 0;border:1px solid var(--border)}
+.quiz h4{font-size:20px;color:var(--dark);margin-bottom:18px;font-weight:900;display:flex;align-items:center;gap:8px}
+.quiz-q{background:var(--cream);padding:14px 18px;border-radius:9px;margin:10px 0;border-right:3px solid var(--gold);font-size:15px;line-height:1.8}
+.quiz-q b{color:var(--gold);margin-left:8px}
+
+.hw{background:linear-gradient(135deg,#fdf8ec,#f8edce);border:2px solid var(--gold);border-radius:13px;padding:28px;margin:28px 0}
+.hw h4{font-size:20px;color:var(--dark);margin-bottom:18px;font-weight:900;display:flex;align-items:center;gap:8px}
+.hw-list{list-style:none}
+.hw-list li{padding:11px 0 11px 0;padding-right:34px;position:relative;font-size:15px;line-height:1.8;border-bottom:1px dashed var(--border)}
+.hw-list li:last-child{border-bottom:none}
+.hw-list li::before{content:'☐';position:absolute;right:0;top:11px;font-size:18px;color:var(--gold)}
+
+.footer{background:linear-gradient(135deg,var(--dark),var(--blue));color:#fff;padding:44px 36px 26px;margin-top:72px}
+.footer-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:36px;margin-bottom:26px}
+.footer h5{color:var(--gold);font-size:15px;margin-bottom:14px;font-weight:900}
+.footer p,.footer a{color:rgba(255,255,255,.78);font-size:14px;line-height:1.9;text-decoration:none;display:block;transition:.3s}
+.footer a:hover{color:var(--gold)}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:20px;text-align:center;color:rgba(255,255,255,.55);font-size:13px}
+.footer-bottom .brand{color:var(--gold);font-weight:700}
+
+@media(max-width:768px){
+.cover h1{font-size:32px}.cover-sub{font-size:17px}.toc-grid{grid-template-columns:1fr}
+.sec-num{font-size:32px;min-width:52px}.sec-head h2{font-size:22px}
+.cmp{grid-template-columns:1fr}.main{padding:28px 16px 10px}
+.term{flex-direction:column;gap:6px}.term-n{min-width:auto}
+}
+@media print{.cover{break-after:page}.sec{break-inside:avoid}.drill,.golden{break-inside:avoid}}
+</style>
+</head>
+<body>
+
+<section class="cover" id="s01">
+<div class="cover-inner">
+  <div class="cover-meta">
+    <span>Sunshine T Academy</span><span class="dot"></span>
+    <span>AI Automation for Professionals</span><span class="dot"></span>
+    <span>المحاضرة  من ٦</span>
+  </div>
+  <span class="cover-badge">القلب الحقيقي للكورس — AI Inside the Flow</span>
+  <h1>دمج Claude مع Power Automate<br><span class="hl">الأتمتة الذكية المتكاملة</span></h1>
+  <p class="cover-sub">من "إيميل يوصل" إلى "AI يفهمه ويلخصه ويحفظه في Excel" — المحاضرة دي هتخلي الـ AI يشتغل جوا الـ Flow أوتوماتيك بدون ما تفتح Claude بنفسك.</p>
+
+  <div class="info-grid">
+    <div class="mini-card"><div class="lbl">المدة</div><div class="val">⏱ ساعتان</div></div>
+    <div class="mini-card"><div class="lbl">المستوى</div><div class="val">متوسط</div></div>
+    <div class="mini-card"><div class="lbl">الأدوات</div><div class="val">Power Automate · Claude API · HTTP</div></div>
+    <div class="mini-card"><div class="lbl">المدرب</div><div class="val">م. أحمد</div></div>
+  </div>
+
+  <div class="toc-box">
+    <div class="toc-title">جدول المحتويات — ١٠ محاور</div>
+    <ul class="toc-grid">
+      <li><span class="toc-n">٠١</span> الغلاف</li>
+      <li><span class="toc-n">٠٢</span> ليه الـ AI جوا الـ Flow؟</li>
+      <li><span class="toc-n">٠٣</span> HTTP Action و الـ APIs</li>
+      <li><span class="toc-n">٠٤</span> الإعدادات: API Key + Cost</li>
+      <li><span class="toc-n">٠٥</span> Demo: بناء الـ Flow الذكي (جزء 1)</li>
+      <li><span class="toc-n">٠٦</span> Demo: Parse JSON + Excel (جزء 2)</li>
+      <li><span class="toc-n">٠</span> تمرين عملي</li>
+      <li><span class="toc-n">٠٨</span> المرجع السريع (JSON)</li>
+      <li><span class="toc-n">٠٩</span> قاموس المصطلحات + API Limits</li>
+      <li><span class="toc-n">١٠</span> التدريب الختامي والواجب</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+<div class="main">
+
+<!-- ===== SECTION 02 ===== -->
+<section class="sec" id="s02">
+<div class="sec-head"><div class="sec-num">٠٢</div><div><h2>ليه الـ AI جوا الـ Flow؟</h2><div class="sec-sub">تأسيس الدافع قبل الشرح التقني</div></div></div>
+
+<p class="intro">
+  في المحاضرة الرابعة بنينا Flow بينقل البيانات من الإيميل للـ Excel. بس الـ Flow كان "بيلم" — بينقل النص كما هو بدون ما يفهمه.
+  <strong>النهاردة هنخلي الـ Flow "يفكر"</strong> — يستلم الإيميل، يفهمه، يلخصه، ويستخرج البيانات المهمة قبل ما يحفظها.
+</p>
+
+<div class="golden">
+  <p>الأتمتة العادية تنقل البيانات. الأتمتة الذكية تفهم البيانات. الفرق بينهم هو إنك بتوفر مش بس وقت النقل، لكن وقت القراءة والتحليل كمان.</p>
+</div>
+
+<div class="cmp">
+  <div class="cmp-side no">
+    <span class="cmp-badge">الأتمتة العادية ❌</span>
+    <h4>Flow المحاضرة 4</h4>
+    <ul>
+      <li>إيميل يوصل → ينقل النص كما هو</li>
+      <li>مش بيفهم المحتوى</li>
+      <li>بيحفظ كل الكلام (حتى غير المهم)</li>
+      <li>محتاج تدخل بشري للتلخيص</li>
+    </ul>
+  </div>
+  <div class="cmp-side ok">
+    <span class="cmp-badge">الأتمتة الذكية ✅</span>
+    <h4>Flow النهاردة</h4>
+    <ul>
+      <li>إيميل يوصل → AI يفهمه ويلخصه</li>
+      <li>بيستخرج البيانات المهمة بس</li>
+      <li>بيرجع بيانات منظمة</li>
+      <li>مش محتاج تدخل بشري</li>
+    </ul>
+  </div>
+</div>
+
+<div class="cards">
+  <div class="card">
+    <div class="card-icon">📧</div>
+    <h4>شكاوى العملاء</h4>
+    <p>بدل ما تنقل نص الشكوى كما هو، الـ AI يلخصها في جملة ويصنف نوع العطل تلقائياً.</p>
+  </div>
+  <div class="card">
+    <div class="card-icon"></div>
+    <h4>تقارير الصيانة</h4>
+    <p>الـ AI يقرأ تقرير الفني الطويل، ويستخرج بس: اسم الفني، نوع العطل، والوقت المستغرق.</p>
+  </div>
+  <div class="card">
+    <div class="card-icon">📋</div>
+    <h4>فواتير متغيرة</h4>
+    <p>الـ AI يحلل الفاتورة، يحسب الضريبة، ويحدد لو فيه استهلاك غير طبيعي ويحذرك.</p>
+  </div>
+  <div class="card">
+    <div class="card-icon">🔢</div>
+    <h4>قراءات العدادات</h4>
+    <p>الـ AI يقارن القراءة الحالية بالسابقة، ويحسب نسبة الزيادة ويصنفها (طبيعي/مرتفع/خطر).</p>
+  </div>
+</div>
+
+<div class="box box-tip">
+  <h5><i class="fas fa-lightbulb"></i> اسأل نفسك</h5>
+  <p>"كام مرة في اليوم بقرأ إيميل أو تقرير عشان أستخرج منه معلومة واحدة؟" لو أكتر من 10 مرات — المحاضرة دي هتوفر عليك ساعتين يومياً.</p>
+</div>
+</section>
+
+<!-- ===== SECTION 03 ===== -->
+<section class="sec" id="s03">
+<div class="sec-head"><div class="sec-num">٠٣</div><div><h2>HTTP Action و الـ APIs</h2><div class="sec-sub">المفهوم الأساسي — ٥ دقيقة</div></div></div>
+
+<p class="intro">
+  عشان Power Automate يكلم Claude، محتاجين "مترجم". المترجم ده اسمه <strong>HTTP Action</strong>. والـ API هو "الباب" اللي بنطرق عليه عشان نكلم الـ AI.
+</p>
+
+<div class="golden">
+  <p>
+    الـ API = الباب. الـ HTTP Action = الجرس. والـ JSON = لغة الطلب.<br>
+    لو فهمت التشبيه ده، فهمت 90% من دمج الـ AI مع الأتمتة.
+  </p>
+</div>
+
+<div class="ex">
+  <div class="ex-head"><span class="ex-tag">مثال ١</span><h4>تشبيه المطعم</h4></div>
+  <table class="tbl">
+    <thead><tr><th>في المطعم</th><th>في Power Automate</th><th>الوظيفة</th></tr></thead>
+    <tbody>
+      <tr><td><strong>الزبون</strong></td><td>Power Automate</td><td>اللي عنده الطلب (الإيميل)</td></tr>
+      <tr><td><strong>الجارسون</strong></td><td>HTTP Action</td><td>ياخد الطلب ويوديه للمطبخ</td></tr>
+      <tr><td><strong>المطبخ</strong></td><td>Claude API</td><td>بيطبخ الطلب (بيحلل النص)</td></tr>
+      <tr><td><strong>قائمة الطلب</strong></td><td>JSON Body</td><td>لغة منظمة يفهمها المطبخ</td></tr>
+      <tr><td><strong>الطبق</strong></td><td>JSON Response</td><td>النتيجة المنظمة اللي ترجع</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="term">
+  <div class="term-n">API</div>
+  <div class="term-d">
+    <strong>Application Programming Interface.</strong> واجهة برمجية بتخلي التطبيقات تتكلم مع بعض.
+    Claude API = الباب اللي بنبعتله النص وهو بيرجعلنا الرد المنظم.
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-n">HTTP Action</div>
+  <div class="term-d">
+    <strong>إجراء HTTP.</strong> Action في Power Automate بيبعت طلب (Request) لعنوان URL معين،
+    ويستقبل الرد (Response). ده اللي بيخلي الـ Flow يكلم أي API في العالم.
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-n">JSON</div>
+  <div class="term-d">
+    <strong>JavaScript Object Notation.</strong> لغة نصية منظمة بتستخدمها الـ APIs.
+    شكلها: <code>{"name": "Ahmed", "age": 30}</code>. سهلة القراءة للإنسان والآلة.
+  </div>
+</div>
+
+<div class="term">
+  <div class="term-n">Endpoint</div>
+  <div class="term-d">
+    <strong>نقطة النهاية (URL).</strong> العنوان اللي بنبعتهله الـ Request.
+    مثال لـ Claude: <code>https://api.anthropic.com/v1/messages</code>
+  </div>
+</div>
+
+<div class="box box-tip">
+  <h5><i class="fas fa-lightbulb"></i> نصيحة عملية</h5>
+  <p>متخافش من كلمة API. هي مجرد "عنوان ويب" + "مفتاح دخول" + "رسالة منظمة". لو تعرف تبعت إيميل، تقدر تبعت API Request.</p>
+</div>
+</section>
+
+<!-- ===== SECTION 04 ===== -->
+<section class="sec" id="s04">
+<div class="sec-head"><div class="sec-num">٠٤</div><div><h2>الإعدادات: API Key + Cost Warning</h2><div class="sec-sub">تجهيز البيئة قبل البناء — ١ دقيقة</div></div></div>
+
+<p class="intro">
+  قبل ما نبني الـ Flow، لازم نجهز "مفتاح الدخول" (API Key) ونفهم التكلفة.
+</p>
+
+<h3 style="font-size:20px;margin:24px 0 14px;color:var(--dark)">1️⃣ الحصول على Claude API Key</h3>
+
+<div class="box box-info">
+  <h5><i class="fas fa-key"></i> خطوات الحصول على API Key</h5>
+  <p>
+    1. ادخل على: <code>console.anthropic.com</code><br>
+    2. سجّل دخول أو اعمل حساب جديد<br>
+    3. اضغط "Get API Keys" من القائمة الجانبية<br>
+    4. اضغط "Create Key"<br>
+    5. سمّي المفتاح: <code>PowerAutomate_Key</code><br>
+    6. انسخ المفتاح واحفظه في مكان آمن<br><br>
+    <strong>️ مهم:</strong> المفتاح ده زي الباسورد — متشاركهوش مع حد!
+  </p>
+</div>
+
+<h3 style="font-size:20px;margin:28px 0 14px;color:var(--dark)">2️⃣ Cost Warning — تحذير التكلفة</h3>
+
+<div class="box box-cost">
+  <h5><i class="fas fa-credit-card"></i> 💰 حساب تكلفة Claude API شهرياً</h5>
+  <p>
+    <strong>سعر Claude API:</strong><br>
+    - Input: $3 لكل مليون توكن<br>
+    - Output: $15 لكل مليون توكن<br><br>
+    <strong>مثال: موظف فواتير بيستخدم الـ API يومياً:</strong><br>
+    - 10 طلبات يومياً × 500 توكن = 5,000 توكن يومياً<br>
+    - في الشهر (22 يوم) = 110,000 توكن<br>
+    - <strong>التكلفة: ~$0.33 شهرياً (أقل من دولار!)</strong><br><br>
+    <strong>💡 الخلاصة:</strong> التكلفة ضئيلة جداً مقابل التوفير في الوقت<br>
+    لكن لازم تكون aware بيها
+  </p>
+</div>
+
+<h3 style="font-size:20px;margin:28px 0 14px;color:var(--dark)">3️⃣ API Rate Limits</h3>
+
+<div class="box box-warn">
+  <h5><i class="fas fa-exclamation-triangle"></i> ⚠️ API Rate Limits</h5>
+  <p>
+    <strong>في الحساب المجاني:</strong><br>
+    - 50 طلب في الدقيقة<br>
+    - 100,000 توكن في اليوم<br><br>
+    <strong>في الحساب المدفوع:</strong><br>
+    - 1000 طلب في الدقيقة<br>
+    - غير محدود تقريباً<br><br>
+    <strong>💡 50 طلب/دقيقة = كافي جداً لشغل موظف واحد</strong>
+  </p>
+</div>
+
+<div class="drill">
+  <div class="drill-head"><h4><i class="fas fa-dumbbell"></i> تدريب ١ — احصل على API Key</h4><span class="time-badge"><i class="fas fa-clock"></i> ١٠ دقايق</span></div>
+  <ol>
+    <li>ادخل على console.anthropic.com</li>
+    <li>سجّل دخول أو اعمل حساب جديد</li>
+    <li>احصل على API Key واحفظه في مكان آمن</li>
+    <li>احسب التكلفة الشهرية المتوقعة لشغلك</li>
+  </ol>
+</div>
+</section>
+
+<!-- ===== SECTION 05 ===== -->
+<section class="sec" id="s05">
+<div class="sec-head"><div class="sec-num">٠٥</div><div><h2>Demo: بناء الـ Flow الذكي (جزء 1)</h2><div class="sec-sub">Trigger + HTTP Action — ٥ دقيقة</div></div></div>
+
+<p class="intro">
+  دلوقتي هنفتح Power Automate ونبني الـ Flow الذكي خطوة بخطوة. هنقسمه لجزئين عشان يكون أوضح.
+</p>
+
+<div class="ex">
+  <div class="ex-head"><span class="ex-tag">مثال ٢</span><h4>Flow: تلخيص شكاوى العملاء وحفظها في Excel</h4></div>
+  <div class="ex-scene"><strong>الهدف:</strong> إيميل شكوى يوصل → Claude يلخصه ويستخرج رقم الحساب → البيانات تتحفظ في Excel.</div>
+
+  <h4 style="font-size:16px;margin:16px 0 10px;color:var(--dark);font-weight:900">الخطوة 1: Trigger</h4>
+  <ol class="steps">
+    <li>افتح Power Automate → Create → Automated cloud flow</li>
+    <li>Trigger: <strong>When a new email arrives (V3)</strong></li>
+    <li>اضبط: Folder = Inbox، Subject Filter = <code>شكوى</code></li>
+  </ol>
+
+  <h4 style="font-size:16px;margin:20px 0 10px;color:var(--dark);font-weight:900">الخطوة 2: HTTP Action (القلب)</h4>
+  <ol class="steps">
+    <li>New step → ابحث عن <strong>HTTP</strong></li>
+    <li>Method: <strong>POST</strong></li>
+    <li>URI: <code>https://api.anthropic.com/v1/messages</code></li>
+    <li>Headers:
+      <ul style="margin-top:8px;padding-right:20px">
+        <li><code>x-api-key</code>: [API Key بتاعك]</li>
+        <li><code>anthropic-version</code>: <code>2023-06-01</code></li>
+        <li><code>content-type</code>: <code>application/json</code></li>
+      </ul>
+    </li>
+    <li>Body: انسخ الـ JSON ده:</li>
+  </ol>
+
+  <div class="sandbox"><span class="tag">{</span>
+  <span class="c">  </span><span class="kw">"model"</span><span class="c">: </span><span class="str">"claude-3-5-sonnet-20241022"</span><span class="c">,</span>
+  <span class="c">  </span><span class="kw">"max_tokens"</span><span class="c">: </span><span class="str">1024</span><span class="c">,</span>
+  <span class="c">  </span><span class="kw">"messages"</span><span class="c">: [</span>
+  <span class="c">    {</span>
+  <span class="c">      </span><span class="kw">"role"</span><span class="c">: </span><span class="str">"user"</span><span class="c">,</span>
+  <span class="c">      </span><span class="kw">"content"</span><span class="c">: </span><span class="str">"استخرج من الإيميل التالي: رقم الحساب، نوع الشكوى، والملخص في جملة واحدة. ارجع النتيجة بصيغة JSON فقط. الإيميل: @{triggerOutputs()?['body/body']}"</span>
+  <span class="c">    }</span>
+  <span class="c">  ]</span>
+  <span class="tag">}</span><button class="sandbox-copy" onclick="navigator.clipboard.writeText('{\n  \"model\": \"claude-3-5-sonnet-20241022\",\n  \"max_tokens\": 1024,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"استخرج من الإيميل التالي: رقم الحساب، نوع الشكوى، والملخص في جملة واحدة. ارجع النتيجة بصيغة JSON فقط. الإيميل: @{triggerOutputs()?['body/body']}\"\n    }\n  ]\n}')">نسخ</button></div>
+
+  <div class="checkpoint">
+    <h5>Checkpoint 1: اختبر الـ HTTP Action</h5>
+    <ul>
+      <li>احفظ الـ Flow</li>
+      <li>ابعت إيميل تجريبي فيه "شكوى"</li>
+      <li>افتح Run history</li>
+      <li>شوف الـ HTTP Action: نجح (200 OK) ولا فشل؟</li>
+    </ul>
+  </div>
+
+  <div class="box box-tip">
+    <h5><i class="fas fa-lightbulb"></i> سر الـ Prompt جوا الـ JSON</h5>
+    <p>لاحظ إني قلت لـ Claude: <strong>"ارجع النتيجة بصيغة JSON فقط"</strong>. ده مهم جداً عشان الـ Parse JSON يقدر يفك شفرة الرد ويحطه في أعمدة Excel.</p>
+  </div>
+</div>
+</section>
+
+<!-- ===== SECTION 06 ===== -->
+<section class="sec" id="s06">
+<div class="sec-head"><div class="sec-num">٠٦</div><div><h2>Demo: Parse JSON + Excel (جزء 2)</h2><div class="sec-sub">تحويل JSON لبيانات + حفظ في Excel — ١٥ دقيقة</div></div></div>
+
+<p class="intro">
+  دلوقتي Claude رد علينا بـ JSON. لكن الـ JSON ده نص — محتاجين نحوله لبيانات نقدر نستخدمها في Excel. هنا بييجي دور Parse JSON.
+</p>
+
+<h3 style="font-size:20px;margin:24px 0 14px;color:var(--dark)"> شرح Parse JSON</h3>
+
+<div class="box box-info">
+  <h5><i class="fas fa-code"></i> Parse JSON بيحول النص لبيانات</h5>
+  <p>
+    <strong>قبل Parse JSON (نص):</strong><br>
+    <code>{"رقم_الحساب": "12345", "نوع_الشكوى": "عطل في العداد", "الملخص": "العميل يبلغ عن انقطاع المياه"}</code><br><br>
+    <strong>بعد Parse JSON (بيانات):</strong><br>
+    - رقم_الحساب = "12345"<br>
+    - نوع_الشكوى = "عطل في العداد"<br>
+    - الملخص = "العميل يبلغ عن انقطاع المياه"<br><br>
+    الـ Parse JSON بياخد الـ JSON ويحط كل قيمة في متغير تقدر تستخدمه في Excel.
+  </p>
+</div>
+
+<div class="ex">
+  <div class="ex-head"><span class="ex-tag">مثال ٣</span><h4>إضافة Parse JSON + حفظ في Excel</h4></div>
+
+  <h4 style="font-size:16px;margin:16px 0 10px;color:var(--dark);font-weight:900">الخطوة 3: Parse JSON</h4>
+  <ol class="steps">
+    <li>New step → <strong>Parse JSON</strong></li>
+    <li>Content: اختر <strong>Body</strong> من HTTP Action</li>
+    <li>Schema: اضغط "Generate from sample" وحط الرد التجريبي من Claude</li>
+    <li>الـ Schema هيتولد تلقائياً</li>
+  </ol>
+
+  <h4 style="font-size:16px;margin:20px 0 10px;color:var(--dark);font-weight:900">الخطوة 4: Add row to Excel</h4>
+  <ol class="steps">
+    <li>New step → <strong>Add a row into a table</strong> (Excel Online)</li>
+    <li>اختار الملف والجدول</li>
+    <li>في الأعمدة: استخدم Dynamic Content من Parse JSON
+      <ul style="margin-top:8px;padding-right:20px">
+        <li><strong>رقم الحساب:</strong> اختر من Parse JSON</li>
+        <li><strong>نوع الشكوى:</strong> اختر من Parse JSON</li>
+        <li><strong>الملخص:</strong> اختر من Parse JSON</li>
+        <li><strong>التاريخ:</strong> <code>utcNow()</code></li>
+        <li><strong>الحالة:</strong> اكتب <code>جديد</code></li>
+      </ul>
+    </li>
+  </ol>
+
+  <div class="ex-result">✅ <strong>النتيجة:</strong> Flow ذكي شغال. إيميل يوصل → AI يفهمه → Excel يتحدث ببيانات نظيفة ومنظمة.</div>
+</div>
+
+<div class="box box-tip">
+  <h5><i class="fas fa-lightbulb"></i> نصيحة عملية</h5>
+  <p>لو Parse JSON فشل، غالباً السبب إن Claude رد بـ Text عادي بدل JSON. الحل: عدّل الـ Prompt وقله "ارجع JSON فقط بدون أي نص إضافي".</p>
+</div>
+</section>
+
+<!-- ===== SECTION 07 ===== -->
+<section class="sec" id="s07">
+<div class="sec-head"><div class="sec-num">٠٧</div><div><h2>تمرين عملي: Flow الذكاء</h2><div class="sec-sub">التطبيق الفعلي — ١ دقيقة</div></div></div>
+
+<p class="intro">
+  دلوقتي دورك. هتبنّي Flow ذكي لسيناريو تاني من شغلك. <strong>استخدم نفس البنية وعدّل بس الـ Prompt.</strong>
+</p>
+
+<div class="ex">
+  <div class="ex-head"><span class="ex-tag">مثال ٤</span><h4>السيناريو: تحليل تقارير الصيانة</h4></div>
+  <div class="ex-scene"><strong>المطلوب:</strong> تقرير صيانة يوصل على إيميل → Claude يستخرج: اسم الفني، نوع العطل، الوقت المستغرق → يحفظ في Excel.</div>
+
+  <h4 style="font-size:16px;margin:16px 0 10px;color:var(--dark);font-weight:900">التعديل المطلوب في الـ JSON Body:</h4>
+  <div class="sandbox"><span class="tag">{</span>
+  <span class="c">  </span><span class="kw">"model"</span><span class="c">: </span><span class="str">"claude-3-5-sonnet-20241022"</span><span class="c">,</span>
+  <span class="c">  </span><span class="kw">"max_tokens"</span><span class="c">: </span><span class="str">1024</span><span class="c">,</span>
+  <span class="c">  </span><span class="kw">"messages"</span><span class="c">: [</span>
+  <span class="c">    {</span>
+  <span class="c">      </span><span class="kw">"role"</span><span class="c">: </span><span class="str">"user"</span><span class="c">,</span>
+  <span class="c">      </span><span class="kw">"content"</span><span class="c">: </span><span class="str">"من تقرير الصيانة التالي، استخرج: اسم الفني، نوع العطل، الوقت المستغرق بالدقائق. ارجع النتيجة بصيغة JSON فقط. التقرير: @{triggerOutputs()?['body/body']}"</span>
+  <span class="c">    }</span>
+  <span class="c">  ]</span>
+  <span class="tag">}</span><button class="sandbox-copy" onclick="navigator.clipboard.writeText('{\n  \"model\": \"claude-3-5-sonnet-20241022\",\n  \"max_tokens\": 1024,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"من تقرير الصيانة التالي، استخرج: اسم الفني، نوع العطل، الوقت المستغرق بالدقائق. ارجع النتيجة بصيغة JSON فقط. التقرير: @{triggerOutputs()?['body/body']}\"\n    }\n  ]\n}')">نسخ</button></div>
+
+  <div class="ex-result">✅ <strong>النتيجة المتوقعة:</strong> Flow بيحلل تقارير الصيانة ويحط البيانات في Excel أوتوماتيك.</div>
+</div>
+
+<div class="drill">
+  <div class="drill-head"><h4><i class="fas fa-dumbbell"></i> تدريب ٢ — عدّل الـ Prompt</h4><span class="time-badge"><i class="fas fa-clock"></i> ١٠ دقايق</span></div>
+  <ol>
+    <li>افتح الـ Flow اللي بنيته في التدريب السابق</li>
+    <li>عدّل الـ Prompt جوا الـ JSON Body ليناسب سيناريو شغلك</li>
+    <li>اختبر الـ Flow ببيانات حقيقية</li>
+    <li>تأكد إن الـ Parse JSON شغال والبيانات بتدخل Excel صح</li>
+  </ol>
+</div>
+</section>
+
+<!-- ===== SECTION 08 ===== -->
+<section class="sec" id="s08">
+<div class="sec-head"><div class="sec-num">٨</div><div><h2>المرجع السريع — قوالب JSON</h2><div class="sec-sub">احتفظ بهذه الصفحة — قوالب جاهزة</div></div></div>
+
+<p class="intro">كل قالب هنا مجرّب وجاهز للنسخ واللصق في الـ HTTP Action Body.</p>
+
+<h3 style="font-size:20px;margin:24px 0 14px;color:var(--dark)">أولاً: قوالب الاستخراج</h3>
+<table class="tbl">
+<thead><tr><th>الهدف</th><th>الـ Prompt جوا الـ JSON</th></tr></thead>
+<tbody>
+<tr><td>استخراج بيانات محددة</td><td><code>استخرج: [البيانات] من النص التالي. ارجع JSON فقط.</code></td></tr>
+<tr><td>تلخيص نص</td><td><code>لخّص النص التالي في 3 نقاط رئيسية. ارجع JSON فقط.</code></td></tr>
+<tr><td>تصنيف نص</td><td><code>صنّف النص التالي إلى: [عاجل، متوسط، عادي]. ارجع JSON فقط.</code></td></tr>
+<tr><td>تحليل مشاعر</td><td><code>حلل مشاعر الكاتب في النص التالي: [إيجابي، سلبي، محايد]. ارجع JSON فقط.</code></td></tr>
+<tr><td>استخراج تواريخ</td><td><code>استخرج كل التواريخ والمواعيد من النص. ارجع JSON فقط.</code></td></tr>
+</tbody>
+</table>
+
+<h3 style="font-size:20px;margin:28px 0 14px;color:var(--dark)">ثانياً: قوالب التحويل</h3>
+<table class="tbl">
+<thead><tr><th>الهدف</th><th>الـ Prompt جوا الـ JSON</th></tr></thead>
+<tbody>
+<tr><td>ترجمة نص</td><td><code>ترجم النص التالي للإنجليزية الرسمية. ارجع JSON فقط.</code></td></tr>
+<tr><td>إعادة صياغة</td><td><code>أعد صياغة النص التالي بأسلوب رسمي. ارجع JSON فقط.</code></td></tr>
+<tr><td>تصحيح إملائي</td><td><code>صحح الأخطاء الإملائية في النص التالي. ارجع JSON فقط.</code></td></tr>
+<tr><td>تحويل لصيغة أخرى</td><td><code>حوّل النص التالي لقائمة بوليت. ارجع JSON فقط.</code></td></tr>
+<tr><td>استخراج Keywords</td><td><code>استخرج 5 كلمات مفتاحية من النص. ارجع JSON فقط.</code></td></tr>
+</tbody>
+</table>
+
+<div class="box box-tip">
+  <h5><i class="fas fa-lightbulb"></i> قاعدة ذهبية للـ Prompt جوا الـ API</h5>
+  <p>دايماً اختم الـ Prompt بـ: <strong>"ارجع النتيجة بصيغة JSON فقط بدون أي نص إضافي."</strong> ده بيضمن إن الـ Parse JSON في Power Automate مش هيفشل.</p>
+</div>
+</section>
+
+<!-- ===== SECTION 09 ===== -->
+<section class="sec" id="s09">
+<div class="sec-head"><div class="sec-num">٠٩</div><div><h2>قاموس المصطلحات + API Limits</h2><div class="sec-sub">مرجع سريع — ١٥ مصطلح</div></div></div>
+
+<div class="glossary">
+  <div class="g-item"><div class="g-term">API</div><div class="g-ar">واجهة برمجية</div><div class="g-def">الباب اللي التطبيقات بتتكلم من خلاله مع بعض.</div></div>
+  <div class="g-item"><div class="g-term">HTTP Action</div><div class="g-ar">إجراء HTTP</div><div class="g-def">Action في Power Automate بيبعت Request ويستقبل Response.</div></div>
+  <div class="g-item"><div class="g-term">JSON</div><div class="g-ar">لغة نصية منظمة</div><div class="g-def">اللغة اللي الـ APIs بتتكلم بيها. سهلة القراءة للإنسان والآلة.</div></div>
+  <div class="g-item"><div class="g-term">Endpoint</div><div class="g-ar">نقطة النهاية (URL)</div><div class="g-def">العنوان اللي بنبعتهله الـ Request (مثل: api.anthropic.com).</div></div>
+  <div class="g-item"><div class="g-term">API Key</div><div class="g-ar">مفتاح الدخول</div><div class="g-def">كود سري بيثبت إنك مخول تستخدم الـ API.</div></div>
+  <div class="g-item"><div class="g-term">Request</div><div class="g-ar">الطلب</div><div class="g-def">الرسالة اللي بنبعتهالـ API (فيه Headers و Body).</div></div>
+  <div class="g-item"><div class="g-term">Response</div><div class="g-ar">الرد</div><div class="g-def">الرسالة اللي الـ API بيرجعلهالنا (فيه Status Code و Body).</div></div>
+  <div class="g-item"><div class="g-term">Status Code</div><div class="g-ar">كود الحالة</div><div class="g-def">رقم بيوضح نجاح أو فشل الطلب (200 = نجاح، 400 = خطأ).</div></div>
+  <div class="g-item"><div class="g-term">Headers</div><div class="g-ar">الترويسة</div><div class="g-def">معلومات تقنية بتتبعت مع الـ Request (مثل: API Key).</div></div>
+  <div class="g-item"><div class="g-term">Body</div><div class="g-ar">المحتوى</div><div class="g-def">البيانات الفعلية اللي بنبعتهالـ API (الـ JSON).</div></div>
+  <div class="g-item"><div class="g-term">Parse JSON</div><div class="g-ar">تحليل JSON</div><div class="g-def">Action في Power Automate بيحول نص JSON لبيانات قابلة للاستخدام.</div></div>
+  <div class="g-item"><div class="g-term">Schema</div><div class="g-ar">المخطط</div><div class="g-def">الهيكل اللي بنقوله لـ Parse JSON يتوقعه في الـ Response.</div></div>
+  <div class="g-item"><div class="g-term">Dynamic Content</div><div class="g-ar">المحتوى الديناميكي</div><div class="g-def">بيانات من Actions سابقة متاحة للاستخدام في Actions لاحقة.</div></div>
+  <div class="g-item"><div class="g-term">Token (API)</div><div class="g-ar">وحدة قياس الاستخدام</div><div class="g-def">الـ API بيحسب التكلفة بالتوكنز (كل 4 حروف ≈ توكن واحد).</div></div>
+  <div class="g-item"><div class="g-term">Rate Limit</div><div class="g-ar">حد المعدل</div><div class="g-def">أقصى عدد طلبات تقدر تبعتها في الدقيقة/الساعة.</div></div>
+</div>
+
+<div class="box box-warn">
+  <h5><i class="fas fa-exclamation-triangle"></i> تذكّر: API Limits</h5>
+  <p>
+    في الحساب المجاني: <strong>50 طلب/دقيقة + 100,000 توكن/يوم</strong>.<br>
+    كافي جداً لشغل موظف واحد. لو احتجت أكتر، يبقى محتاج حساب مدفوع.
+  </p>
+</div>
+</section>
+
+<!-- ===== SECTION 10 ===== -->
+<section class="sec" id="s10">
+<div class="sec-head"><div class="sec-num">١٠</div><div><h2>التدريب الختامي والواجب البيتي</h2><div class="sec-sub">تطبيق شامل — آخر ١٠ دقايق</div></div></div>
+
+<div class="drill">
+  <div class="drill-head"><h4><i class="fas fa-trophy"></i> تدريب ختامي — Flow ذكي من شغلك</h4><span class="time-badge"><i class="fas fa-clock"></i> ١٠ دقايق</span></div>
+  <ol>
+    <li>فكّر في مهمة في شغلك بتاخد منك وقت في القراءة والتحليل</li>
+    <li>ارسم الـ Flow: Trigger → HTTP Action (Claude) → Parse JSON → Excel</li>
+    <li>اكتب الـ Prompt المناسب جوا الـ JSON Body</li>
+    <li>ابني الـ Flow واختبره ببيانات حقيقية</li>
+    <li>تأكد إن البيانات بتدخل Excel منظمة ونظيفة</li>
+  </ol>
+</div>
+
+<div class="hw">
+  <h4><i class="fas fa-clipboard-check"></i> الواجب البيتي — سلّميه في المحاضرة الجاية</h4>
+  <ul class="hw-list">
+    <li>ابنِ Flow ذكي حقيقي من شغلك (مش التدريب — Flow فعلي)</li>
+    <li>اختبره بـ 3 إيميلات/ملفات مختلفة</li>
+    <li>صور الـ Run history لكل اختبار (نجح/فشل)</li>
+    <li>احسب التكلفة الشهرية المتوقعة للـ API</li>
+    <li>اكتبلي إيه الـ Prompt اللي استخدمته وإيه النتائج</li>
+    <li>جهّز نفسك للمحاضرة الجاية: التحسين والتأمين والمشاريع الختامية</li>
+  </ul>
+</div>
+
+<div class="quiz">
+  <h4><i class="fas fa-question-circle"></i> أسئلة المراجعة الذاتية — نظرية</h4>
+  <div class="quiz-q"><b>١.</b> ما الفرق بين الأتمتة العادية والأتمتة الذكية؟</div>
+  <div class="quiz-q"><b>٢.</b> ما هو الـ HTTP Action وإيه وظيفته في Power Automate؟</div>
+  <div class="quiz-q"><b>٣.</b> ليه لازم نطلب من Claude يرجع النتيجة بصيغة JSON فقط؟</div>
+  <div class="quiz-q"><b>٤.</b> ما معنى Status Code 401 و 400؟</div>
+  <div class="quiz-q"><b>٥.</b> ما هو الـ Parse JSON وليه مهم بعد الـ HTTP Action؟</div>
+</div>
+
+<div class="quiz">
+  <h4><i class="fas fa-keyboard"></i> أسئلة المراجعة الذاتية — عملية</h4>
+  <div class="quiz-q"><b>١.</b> اكتب JSON Body لاستخراج "اسم العميل" و"رقم الهاتف" من إيميل.</div>
+  <div class="quiz-q"><b>٢.</b> عدّل Prompt عشان يصنّف الإيميلات لـ (عاجل، متوسط، عادي).</div>
+  <div class="quiz-q"><b>٣.</b> ابنِ Flow يلخص تقارير الصيانة ويحفظها في Excel.</div>
+  <div class="quiz-q"><b>٤.</b> اصلح Flow فشل بسبب إن Claude رد بـ Text مش JSON.</div>
+  <div class="quiz-q"><b>٥.</b> اختبر Flow بـ API Key غلط واقرأ رسالة الخطأ.</div>
+</div>
+
+<div class="box box-info">
+  <h5><i class="fas fa-rocket"></i> استعداد للمحاضرة الجاية (الختامية)</h5>
+  <p>في المحاضرة السادسة، <strong>هنحوّل الـ Flows لنظام احترافي مؤمَّن</strong>. هنضيف Conditions، Error Handling، ونبني 3 مشاريع ختامية شغّالة. جهّز الـ Flows اللي بنيتها وكن مستعد!</p>
+</div>
+</section>
+
+</div>
+
+<footer class="footer">
+<div class="footer-grid">
+  <div>
+    <h5>عن الأكاديمية</h5>
+    <p>Sunshine T Academy — منصة تدريب متخصص في الذكاء الاصطناعي وأتمتة العمليات لموظفي الشركات. كورسات عملية 100% بدون نظريات مجردة.</p>
+  </div>
+  <div>
+    <h5>تواصل معنا</h5>
+    <a href="tel:01080680930">📞 01080680930</a>
+    <a href="#">📧 info@sunshinetacademy.com</a>
+    <a href="#">💬 WhatsApp Support</a>
+  </div>
+  <div>
+    <h5>الكورس الحالي</h5>
+    <p>AI Automation for Professionals</p>
+    <p>6 محاضرات · 12 ساعة · 1,800 جنيه</p>
+    <p>المدرب: م. أحمد (END \ AHMED)</p>
+  </div>
+</div>
+<div class="footer-bottom">© 2025 <span class="brand">Sunshine T Academy</span> · جميع الحقوق محفوظة · AI Automation for Professionals · Lecture 05 / 06 · م. أحمد</div>
+</footer>
+
+<script>
+document.querySelectorAll('.toc-grid li').forEach((item,i) => {
+  item.addEventListener('click', () => {
+    const t = document.getElementById('s0' + (i+1));
+    if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.style.animation = 'fadeUp .5s ease'; });
+}, {threshold: 0.08});
+document.querySelectorAll('.sec').forEach(s => obs.observe(s));
+const style = document.createElement('style');
+style.textContent = '@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}';
+document.head.appendChild(style);
+</script>
+
+</body>
+</html>
